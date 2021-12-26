@@ -16,6 +16,12 @@ With Browser profile launcher, I simply define a whitelist of URL regex patterns
 
 In case I have some URL for which I want to manually choose the profile to be used, I can simply hold down the `alt` key on my keyboard when mouse-clicking the link. This brings up a simple dialog which allows me to choose the profile to be used.
 
+## Pre-launch commands
+
+It might be useful in some scenarios, to execute some shell command for specific URLs which are to be opened. I've added support for this behavior using `:pre-launch-commands` config option.
+
+On our customer project, each developer can spin up a custom docker instance with the whole application up and running. These docker dev instances all share a same URL pattern, and those URLs are only accessible via customer's VPN. Therefore when I click the URL link to such docker instance, browser-profile-launcher will first fire up a xterm window, which will run a script. That script will check if that URL is "already known and registered in VPN routes" and if not, it will ask for sudo password and add vpn routing for that hostname. Once that script finishes, browser-profile-launcher will continue with opening that URL the usual way.
+
 # Requirements
 
 - [babashka](https://babashka.org/) (ie. `bb` binary somewhere on your path)
@@ -36,6 +42,7 @@ chmod +x /home/brdloush/bin/browser-profile-launcher
 ```edn
 {:browsers {:chrome {:exec-command ["google-chrome" "--profile-directory=:dir" ":url"]}
             :firefox {:exec-command ["firefox" "--new-tab" ":url"]}}
+ :pre-launch-commands {"http[s]?://[^/]+\\.mycustomer\\.com" ["xterm" "-e" "zsh -c 'source ~/.zshrc && add-vpn-routing-for-host :url'"]}           
  :profiles {"personal" {:name "personal"
                         :params {:dir "Profile 1"}
                         :fallback? true     

@@ -66,7 +66,17 @@
                                 (fallback-profile-name profiles)))]
     (apply sh (build-sh-command-args profile-name url profiles browsers))))
 
+(defn run-pre-launch-command! [url pre-launch-commands]
+  (when-let [command (->> pre-launch-commands
+                          (filter (fn [[url-regex _command]]
+                                    (re-find (re-pattern url-regex) url)))
+                          (map val)
+                          not-empty
+                          first)]
+    (apply sh (apply-params-on-placeholders command {:url url}))))
+
 (when-let [url (first *command-line-args*)]
   (let [config-file-path (str (System/getProperty "user.home") "/.browser-profile-launcher/profiles.edn")
-        {:keys [profiles browsers]} (edn/read-string (slurp config-file-path))]
+        {:keys [profiles browsers pre-launch-commands]} (edn/read-string (slurp config-file-path))]
+    (run-pre-launch-command! url pre-launch-commands)
     (open-browser! url profiles browsers)))
