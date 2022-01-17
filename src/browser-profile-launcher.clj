@@ -16,7 +16,7 @@
 
 (defn ask-for-profile-name! [profiles]
   (let [profile-names (keys profiles)
-        {:keys [exit out]} (apply sh (concat ["yad" "--list" "--title=Choose browser" "--column=profile" "--no-headers" "--width=250" "--height=150"] profile-names))]
+        {:keys [exit out]} (apply sh (concat ["yad" "--center" "--list" "--title=Choose browser" "--column=profile" "--no-headers" "--width=250" "--height=150"] profile-names))]
     (when (= exit 0)
       (-> out
           str/split-lines
