@@ -44,10 +44,12 @@ chmod +x /home/brdloush/bin/browser-profile-launcher
             :firefox {:exec-command ["firefox" "--new-tab" ":url"]}}
  :pre-launch-commands {"http[s]?://[^/]+\\.mycustomer\\.com" ["xterm" "-e" "zsh -c 'source ~/.zshrc && add-vpn-routing-for-host :url'"]}           
  :profiles {"personal" {:name "personal"
+                        :browser :chrome
                         :params {:dir "Profile 1"}
                         :fallback? true     
                         :url-regexes []}
             "work" {:name "work"
+                    :browser :chrome
                     :params {:dir "Profile 2"}
                     :url-regexes ["http[s]?://[^/]+\\.mycustomer\\.io"
                                   "http[s]?://mycustomer\\.slack\\.com"
